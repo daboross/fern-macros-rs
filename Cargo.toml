@@ -1,0 +1,8 @@
+[package]
+
+name = "simple-logging-macros"
+version = "0.0.1"
+authors = ["Dabo Ross <daboross@daboross.net>"]
+
+[dependencies.simple-logging]
+git = 'https://github.com/daboross/simple-logging-rs.git'
