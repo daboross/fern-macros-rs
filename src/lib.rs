@@ -65,3 +65,26 @@ macro_rules! severe(
         log!(&::logging::Level::Severe, $($arg)*)
     )
 )
+
+#[macro_export]
+macro_rules! log_error(
+    ($result:expr, $($arg:tt)*) => (
+        match $result {
+            Ok(_) => (),
+            Err(e) => severe!(format!($($arg)*, e=e)),
+        }
+    )
+)
+
+#[macro_export]
+macro_rules! log_error_then(
+    ($result:expr, $after:expr, $($arg:tt)*) => (
+        match $result {
+            Ok(_) => (),
+            Err(e) => {
+                severe!($($arg)*, e=e);
+                $after;
+            },
+        }
+    )
+)
