@@ -60,15 +60,8 @@ macro_rules! warning(
 )
 
 #[macro_export]
-macro_rules! error(
+macro_rules! severe(
     ($($arg:tt)*) => (
-        log!(&::logging::Level::Error, $($arg)*)
-    )
-)
-
-#[macro_export]
-macro_rules! critical(
-    ($($arg:tt)*) => (
-        log!(&::logging::Level::Critical, $($arg)*)
+        log!(&::logging::Level::Severe, $($arg)*)
     )
 )
