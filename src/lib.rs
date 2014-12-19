@@ -1,16 +1,15 @@
 #![feature(macro_rules)]
 
-extern crate "simple-logging" as logging;
+extern crate fern;
 
 use std::cell;
 use std::sync;
 use std::io::stdio;
-use logging::Logger;
-use logging::Level;
-use logging::IntoLogger;
-use logging::LoggerOutput;
+use fern::Logger;
+use fern::Level;
+use fern::OutputConfig;
 
-thread_local!(static DEFAULT_LOGGER: cell::RefCell<sync::Arc<Box<Logger + Sync + Send>>> = cell::RefCell::new(sync::Arc::new(LoggerOutput::Stdout.into_logger().unwrap())));
+thread_local!(static DEFAULT_LOGGER: cell::RefCell<sync::Arc<Box<Logger + Sync + Send>>> = cell::RefCell::new(sync::Arc::new(OutputConfig::Stdout.into_logger().unwrap())));
 
 pub fn init_thread_logger(logger: sync::Arc<Box<Logger + Sync + Send>>) {
     DEFAULT_LOGGER.with(move |log| {
@@ -34,35 +33,35 @@ pub fn log(level: &Level, msg: &str) {
 #[macro_export]
 macro_rules! log(
     ($level:expr, $($arg:tt)*) => (
-        ::logging_macros::log($level, format!($($arg)*).as_slice())
+        ::fern_macros::log($level, format!($($arg)*).as_slice())
     )
 );
 
 #[macro_export]
 macro_rules! debug(
     ($($arg:tt)*) => (
-        log!(&::logging::Level::Debug, $($arg)*)
+        log!(&::fern::Level::Debug, $($arg)*)
     )
 );
 
 #[macro_export]
 macro_rules! info(
     ($($arg:tt)*) => (
-        log!(&::logging::Level::Info, $($arg)*)
+        log!(&::fern::Level::Info, $($arg)*)
     )
 );
 
 #[macro_export]
 macro_rules! warning(
     ($($arg:tt)*) => (
-        log!(&::logging::Level::Warning, $($arg)*)
+        log!(&::fern::Level::Warning, $($arg)*)
     )
 );
 
 #[macro_export]
 macro_rules! severe(
     ($($arg:tt)*) => (
-        log!(&::logging::Level::Severe, $($arg)*)
+        log!(&::fern::Level::Severe, $($arg)*)
     )
 );
 
