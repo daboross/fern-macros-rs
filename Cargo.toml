@@ -4,5 +4,5 @@ name = "fern_macros"
 version = "0.0.1"
 authors = ["Dabo Ross <daboross@daboross.net>"]
 
-[dependencies.fern]
-git = 'https://github.com/daboross/fern-rs.git'
+[dependencies]
+fern = "~0.1.0"
