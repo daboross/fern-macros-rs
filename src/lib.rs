@@ -10,7 +10,7 @@ use logging::Level;
 use logging::IntoLogger;
 use logging::LoggerOutput;
 
-thread_local!(static DEFAULT_LOGGER: cell::RefCell<sync::Arc<Box<Logger + Sync + Send>>> = cell::RefCell::new(sync::Arc::new(LoggerOutput::Stdout.into_logger().unwrap())))
+thread_local!(static DEFAULT_LOGGER: cell::RefCell<sync::Arc<Box<Logger + Sync + Send>>> = cell::RefCell::new(sync::Arc::new(LoggerOutput::Stdout.into_logger().unwrap())));
 
 pub fn init_thread_logger(logger: sync::Arc<Box<Logger + Sync + Send>>) {
     DEFAULT_LOGGER.with(move |log| {
@@ -36,35 +36,35 @@ macro_rules! log(
     ($level:expr, $($arg:tt)*) => (
         ::logging_macros::log($level, format!($($arg)*).as_slice())
     )
-)
+);
 
 #[macro_export]
 macro_rules! debug(
     ($($arg:tt)*) => (
         log!(&::logging::Level::Debug, $($arg)*)
     )
-)
+);
 
 #[macro_export]
 macro_rules! info(
     ($($arg:tt)*) => (
         log!(&::logging::Level::Info, $($arg)*)
     )
-)
+);
 
 #[macro_export]
 macro_rules! warning(
     ($($arg:tt)*) => (
         log!(&::logging::Level::Warning, $($arg)*)
     )
-)
+);
 
 #[macro_export]
 macro_rules! severe(
     ($($arg:tt)*) => (
         log!(&::logging::Level::Severe, $($arg)*)
     )
-)
+);
 
 #[macro_export]
 macro_rules! log_error(
@@ -74,7 +74,7 @@ macro_rules! log_error(
             Err(e) => severe!(format!($($arg)*, e=e)),
         }
     )
-)
+);
 
 #[macro_export]
 macro_rules! log_error_then(
@@ -87,4 +87,4 @@ macro_rules! log_error_then(
             },
         }
     )
-)
+);
