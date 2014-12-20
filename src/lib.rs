@@ -22,7 +22,7 @@ use fern::OutputConfig;
 thread_local!(static DEFAULT_LOGGER: cell::RefCell<sync::Arc<Box<Logger + Sync + Send>>> = cell::RefCell::new(sync::Arc::new(OutputConfig::Stdout.into_logger().unwrap())));
 
 #[experimental]
-pub fn init_logger(logger: sync::Arc<Box<Logger + Sync + Send>>) {
+pub fn init_thread_logger(logger: sync::Arc<Box<Logger + Sync + Send>>) {
     DEFAULT_LOGGER.with(move |log| {
         *log.borrow_mut() = logger;
     });
