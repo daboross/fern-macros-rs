@@ -15,14 +15,14 @@ extern crate fern;
 use std::cell;
 use std::sync;
 use std::io::stdio;
-use fern::Logger;
+use fern::ArcLogger;
 use fern::Level;
 use fern::OutputConfig;
 
-thread_local!(static DEFAULT_LOGGER: cell::RefCell<sync::Arc<Box<Logger + Sync + Send>>> = cell::RefCell::new(sync::Arc::new(OutputConfig::Stdout.into_logger().unwrap())));
+thread_local!(static DEFAULT_LOGGER: cell::RefCell<ArcLogger> = cell::RefCell::new(sync::Arc::new(OutputConfig::Stdout.into_logger().unwrap())));
 
 #[experimental]
-pub fn init_thread_logger(logger: sync::Arc<Box<Logger + Sync + Send>>) {
+pub fn init_thread_logger(logger: ArcLogger) {
     DEFAULT_LOGGER.with(move |log| {
         *log.borrow_mut() = logger;
     });

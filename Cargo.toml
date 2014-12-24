@@ -14,4 +14,4 @@ license = "MIT"
 
 
 [dependencies]
-fern = "0.1.0"
+fern = "0.1.2"
