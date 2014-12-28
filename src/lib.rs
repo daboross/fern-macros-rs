@@ -1,57 +1,39 @@
 #![feature(macro_rules)]
 
-//! Logging macros for the fern library. This package stores a thread-local logger, and allows access to it via log!() and <level>!() macros.
+//! Logging macros for the fern library. The macros in the package use the stored thread-local
+//! logger. You can log using the log!() macro to specify a level, or the debug!(), info!(),
+//! warning!() and severe!() macros for each specific level.
 //!
-//! Note that in order for logging_macros to function correctly, you can't rename the fern crate (using 'as'), and `fern_macros` needs to be used as plugin and link. Shown here:
+//! Note that in order for logging_macros to function correctly, you need to be using the `fern`
+//! crate under the name `fern`, as shown below:
 //!
 //! ```
 //! extern crate fern;
-//! #[phase(plugin, link)]
+//! #[phase(plugin)]
 //! extern crate fern_macros;
 //! ```
 
-extern crate fern;
 
-use std::cell;
-use std::sync;
-use std::io::stdio;
-use fern::ArcLogger;
-use fern::Level;
-use fern::OutputConfig;
-
-thread_local!(static DEFAULT_LOGGER: cell::RefCell<ArcLogger> = cell::RefCell::new(sync::Arc::new(OutputConfig::Stdout.into_logger().unwrap())));
-
-#[experimental]
-pub fn init_thread_logger(logger: ArcLogger) {
-    DEFAULT_LOGGER.with(move |log| {
-        *log.borrow_mut() = logger;
-    });
-}
-
-#[experimental]
-pub fn log(level: &Level, msg: &str) {
-    DEFAULT_LOGGER.with(|logger| {
-        match logger.borrow().log(level, msg) {
-            Ok(()) => (),
-            // TODO: Should we store stderr_raw here, or does it not matter, since this is really totally backup.
-            Err(e) => match write!(&mut stdio::stderr_raw(), "Error logging {{level: {}, msg: {}}}: {}", level, msg, e) {
-                Ok(()) => (),
-                Err(e2) => panic!(format!("Backup logging failed after regular logging failed. Original log: {{level: {}, msg: {}}}\nLogging error: {}\nBackup logging error: {}", level, msg, e, e2)),
-            }
-        };
-    });
-}
-
-/// Logs a message with the thread logger.
+/// Logs a message with the thread-local logger stored in fern::local.
 #[macro_export]
 #[experimental]
 macro_rules! log(
     ($level:expr, $($arg:tt)*) => (
-        ::fern_macros::log($level, format!($($arg)*).as_slice())
+        {
+            let msg = format!($($arg)*);
+            let level = $level;
+            match ::fern::local::log(level, msg.as_slice()) {
+                Ok(()) => (),
+                Err(e) => match write!(&mut ::std::io::stdio::stderr_raw(), "Error logging {{level: {}, msg: {}}}: {}", level, msg, e) {
+                    Ok(()) => (),
+                    Err(e2) => panic!(format!("Backup logging failed after regular logging failed. Original log: {{level: {}, msg: {}}}\nLogging error: {}\nBackup logging error: {}", level, msg, e, e2)),
+                }
+            };
+        }
     )
 );
 
-/// Logs a debug message with the thread logger.
+/// Example the same as `log!()`, but specifies the `Level::Debug` logging level.
 #[macro_export]
 #[experimental]
 macro_rules! debug(
@@ -60,7 +42,7 @@ macro_rules! debug(
     )
 );
 
-/// Logs an informational message with the thread logger.
+/// Example the same as `log!()`, but specifies the `Level::Info` logging level.
 #[macro_export]
 #[experimental]
 macro_rules! info(
@@ -69,7 +51,7 @@ macro_rules! info(
     )
 );
 
-/// Logs a warning message with the thread logger.
+/// Example the same as `log!()`, but specifies the `Level::Warning` logging level.
 #[macro_export]
 #[experimental]
 macro_rules! warning(
@@ -78,7 +60,7 @@ macro_rules! warning(
     )
 );
 
-/// Logs a severe message with the thread logger.
+/// Example the same as `log!()`, but specifies the `Level::Severe` logging level.
 #[macro_export]
 #[experimental]
 macro_rules! severe(
@@ -89,19 +71,36 @@ macro_rules! severe(
 
 /// Logs an error message with the thread logger, if an error occurs.
 ///
-/// This macro requires a Result<_, Show>, and will log as severe error message with the given argument format if the result happens to end up being Err(e)
+/// This macro requires a Result<_, Show>, and will log as severe error message with the given
+/// argument format if the result happens to end up being Err(e)
+/// Example usage would be something like:
+/// ```
+/// let writer = std::io::stdio::stdout();
+/// log_error!(writer.write("hi"), return, "Failed to write to stream: {e}");
+/// ```
+/// The above statement would log "Failed to write to stream: <error text>" if writing to stdout
+/// failed.
 #[macro_export]
 #[experimental]
 macro_rules! log_error(
     ($result:expr, $($arg:tt)*) => (
         match $result {
             Ok(_) => (),
-            Err(e) => severe!(format!($($arg)*, e=e)),
+            Err(e) => severe!($($arg)*, e=e),
         }
     )
 );
 
-/// Exactly the same as log_error!(), except also has an 'after' statement which will be run after logging the severe error message.
+/// Exactly the same as log_error!(), except also has an 'after' statement which will be run after
+/// logging the severe error message.
+///
+/// Example usage would be something like:
+/// ```
+/// let writer = std::io::stdio::stdout();
+/// log_error_then!(writer.write("hi"), return, "Failed to write to stream: {e}");
+/// ```
+/// If writing to stdout failed, the above statement would log "Failed to write to stream:
+/// <error text>", then return from the current function prematurely.
 #[macro_export]
 #[experimental]
 macro_rules! log_error_then(
