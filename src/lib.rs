@@ -1,5 +1,3 @@
-#![feature(macro_rules)]
-
 //! Logging macros for the fern library. The macros in the package use the stored thread-local
 //! logger. You can log using the log!() macro to specify a level, or the debug!(), info!(),
 //! warning!() and severe!() macros for each specific level.

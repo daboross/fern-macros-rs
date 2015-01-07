@@ -1,7 +1,7 @@
 [package]
 
 name = "fern_macros"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Dabo Ross <daboross@daboross.net>"]
 description = "Fern is a simple runtime-configurable logging library"
 
@@ -14,4 +14,4 @@ license = "MIT"
 
 
 [dependencies]
-fern = "0.1.3"
+fern = "0.1.6"
