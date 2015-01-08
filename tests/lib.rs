@@ -1,10 +1,8 @@
-#![feature(phase)]
-
 //! This test file mostly just has tests that make sure that the macros successfully compile.
 //! TODO: better testing.
 
 extern crate fern;
-#[phase(plugin)]
+#[macro_use]
 extern crate fern_macros;
 
 use std::sync;

@@ -5,9 +5,9 @@
 //! Note that in order for logging_macros to function correctly, you need to be using the `fern`
 //! crate under the name `fern`, as shown below:
 //!
-//! ```
+//! ```no_test
 //! extern crate fern;
-//! #[phase(plugin)]
+//! #[macro_use]
 //! extern crate fern_macros;
 //! ```
 
