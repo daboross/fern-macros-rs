@@ -1,3 +1,4 @@
+#![allow(unstable)]
 //! Logging macros for the fern library. The macros in the package use the stored thread-local
 //! logger. You can log using the log!() macro to specify a level, or the debug!(), info!(),
 //! warning!() and severe!() macros for each specific level.
@@ -22,9 +23,9 @@ macro_rules! log(
             let level = $level;
             match ::fern::local::log(level, msg.as_slice()) {
                 Ok(()) => (),
-                Err(e) => match write!(&mut ::std::io::stdio::stderr_raw(), "Error logging {{level: {}, msg: {}}}: {}", level, msg, e) {
+                Err(e) => match write!(&mut ::std::io::stdio::stderr_raw(), "Error logging {{level: {:?}, msg: {:?}}}: {:?}", level, msg, e) {
                     Ok(()) => (),
-                    Err(e2) => panic!(format!("Backup logging failed after regular logging failed. Original log: {{level: {}, msg: {}}}\nLogging error: {}\nBackup logging error: {}", level, msg, e, e2)),
+                    Err(e2) => panic!(format!("Backup logging failed after regular logging failed. Original log: {{level: {:?}, msg: {:?}}}\nLogging error: {:?}\nBackup logging error: {:?}", level, msg, e, e2)),
                 }
             };
         }
