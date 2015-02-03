@@ -1,4 +1,3 @@
-#![allow(unstable)]
 //! Logging macros for the fern library. The macros in the package use the stored thread-local
 //! logger. You can log using the log!() macro to specify a level, or the debug!(), info!(),
 //! warning!() and severe!() macros for each specific level.
@@ -12,7 +11,6 @@
 //! extern crate fern_macros;
 //! ```
 
-
 /// Logs a message with the thread-local logger stored in fern::local.
 #[macro_export]
 #[experimental]
@@ -23,7 +21,7 @@ macro_rules! log(
             let level = $level;
             match ::fern::local::log(level, msg.as_slice()) {
                 Ok(()) => (),
-                Err(e) => match write!(&mut ::std::io::stdio::stderr_raw(), "Error logging {{level: {:?}, msg: {:?}}}: {:?}", level, msg, e) {
+                Err(e) => match write!(&mut ::std::old_io::stdio::stderr_raw(), "Error logging {{level: {:?}, msg: {:?}}}: {:?}", level, msg, e) {
                     Ok(()) => (),
                     Err(e2) => panic!(format!("Backup logging failed after regular logging failed. Original log: {{level: {:?}, msg: {:?}}}\nLogging error: {:?}\nBackup logging error: {:?}", level, msg, e, e2)),
                 }
@@ -74,7 +72,7 @@ macro_rules! severe(
 /// argument format if the result happens to end up being Err(e)
 /// Example usage would be something like:
 /// ```
-/// let writer = std::io::stdio::stdout();
+/// let writer = std::old_io::stdio::stdout();
 /// log_error!(writer.write("hi"), return, "Failed to write to stream: {e}");
 /// ```
 /// The above statement would log "Failed to write to stream: <error text>" if writing to stdout
@@ -95,7 +93,7 @@ macro_rules! log_error(
 ///
 /// Example usage would be something like:
 /// ```
-/// let writer = std::io::stdio::stdout();
+/// let writer = std::old_io::stdio::stdout();
 /// log_error_then!(writer.write("hi"), return, "Failed to write to stream: {e}");
 /// ```
 /// If writing to stdout failed, the above statement would log "Failed to write to stream:
