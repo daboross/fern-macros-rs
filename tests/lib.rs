@@ -1,4 +1,4 @@
-#![feature(io)]
+#![feature(core, io)]
 //! This test file mostly just has tests that make sure that the macros successfully compile.
 //! TODO: better testing.
 
