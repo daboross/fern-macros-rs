@@ -13,7 +13,6 @@
 
 /// Logs a message with the thread-local logger stored in fern::local.
 #[macro_export]
-#[experimental]
 macro_rules! log(
     ($level:expr, $($arg:tt)*) => (
         {
@@ -32,7 +31,6 @@ macro_rules! log(
 
 /// Example the same as `log!()`, but specifies the `Level::Debug` logging level.
 #[macro_export]
-#[experimental]
 macro_rules! debug(
     ($($arg:tt)*) => (
         log!(&::fern::Level::Debug, $($arg)*)
@@ -41,7 +39,6 @@ macro_rules! debug(
 
 /// Example the same as `log!()`, but specifies the `Level::Info` logging level.
 #[macro_export]
-#[experimental]
 macro_rules! info(
     ($($arg:tt)*) => (
         log!(&::fern::Level::Info, $($arg)*)
@@ -50,7 +47,6 @@ macro_rules! info(
 
 /// Example the same as `log!()`, but specifies the `Level::Warning` logging level.
 #[macro_export]
-#[experimental]
 macro_rules! warning(
     ($($arg:tt)*) => (
         log!(&::fern::Level::Warning, $($arg)*)
@@ -59,7 +55,6 @@ macro_rules! warning(
 
 /// Example the same as `log!()`, but specifies the `Level::Severe` logging level.
 #[macro_export]
-#[experimental]
 macro_rules! severe(
     ($($arg:tt)*) => (
         log!(&::fern::Level::Severe, $($arg)*)
@@ -78,7 +73,6 @@ macro_rules! severe(
 /// The above statement would log "Failed to write to stream: <error text>" if writing to stdout
 /// failed.
 #[macro_export]
-#[experimental]
 macro_rules! log_error(
     ($result:expr, $($arg:tt)*) => (
         match $result {
@@ -99,7 +93,6 @@ macro_rules! log_error(
 /// If writing to stdout failed, the above statement would log "Failed to write to stream:
 /// <error text>", then return from the current function prematurely.
 #[macro_export]
-#[experimental]
 macro_rules! log_error_then(
     ($result:expr, $after:expr, $($arg:tt)*) => (
         match $result {
