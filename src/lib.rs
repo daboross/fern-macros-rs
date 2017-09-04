@@ -1,3 +1,12 @@
+//! Deprecated crate which used to accompany the `fern`.
+//!
+//! Before version 0.2, fern used to act as an independent logging library - and thus included its own logging macros.
+//!
+//! This crate is used to accompany fern version 0.1, and is heavily deprecated. The original code remains for b
+//! backwards compatibility reasons, but upgrading `fern` to version 0.2+ will be a great improvement.
+//!
+//! If you really do want to use fern_macros... here's the original documentation:
+//!
 //! Logging macros for the fern library. The macros in the package use the stored thread-local
 //! logger. You can log using the log!() macro to specify a level, or the debug!(), info!(),
 //! warning!() and severe!() macros for each specific level.
